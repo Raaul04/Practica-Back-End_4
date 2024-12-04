@@ -15,14 +15,14 @@ export type UsuarioModel=OptionalId<{
 export type Proyecto={
     id: string;
     nombre: string;
-    descripcion: string;
+    description: string;
     start_date: Date;
     end_date: Date;
     user_id: string;
 }
 export type ProyectoModel=OptionalId<{
     nombre: string;
-    descripcion: string;
+    description: string;
     start_date: Date;
     end_date: Date;
     user_id: ObjectId;

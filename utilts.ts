@@ -33,10 +33,13 @@ export const fromModelProyecto = (proyectoDB: ProyectoModel): Proyecto => {
     };
 };
 
-// Convertimos un documento de MongoDB a una Tarea
 export const fromModelTarea = (tareaDB: TareaModel): Tarea => {
     if (!tareaDB._id) {
         throw new Error("El documento de tarea no tiene un _id válido.");
+    }
+
+    if (!tareaDB.projectId) {
+        throw new Error("El documento de tarea no tiene un projectId válido.");
     }
 
     return {
@@ -46,9 +49,10 @@ export const fromModelTarea = (tareaDB: TareaModel): Tarea => {
         status: tareaDB.status,
         created_at: tareaDB.created_at,
         due_date: tareaDB.due_date,
-        projectId: tareaDB.projectId.toString(), 
+        projectId: tareaDB.projectId.toString(),
     };
 };
+
 
 
 

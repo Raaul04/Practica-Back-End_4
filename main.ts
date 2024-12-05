@@ -113,7 +113,7 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: "Campos requeridos: name, description, start_date, user_id."}), { status: 400 });
     }
 
-    const user = await ProyectoCollection.findOne({ _id: new ObjectId(body.user_id) });
+    const user = await usuarioCollection.findOne({ _id: new ObjectId(body.user_id) });
     if (!user) {
         return new Response(JSON.stringify({ error: "Usuario no encontrado." }), { status: 404 });
     }

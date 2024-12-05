@@ -26,7 +26,7 @@ export const fromModelProyecto = (proyectoDB: ProyectoModel): Proyecto => {
     return {
         id: proyectoDB._id.toString(),
         nombre: proyectoDB.nombre,
-        descripcion: proyectoDB.descripcion,
+        description: proyectoDB.description,
         start_date: proyectoDB.start_date,
         end_date: proyectoDB.end_date,
         user_id: proyectoDB.user_id.toString(), 

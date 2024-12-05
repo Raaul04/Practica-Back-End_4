@@ -44,11 +44,12 @@ const handler = async (req: Request): Promise<Response> => {
 
   }
   else if(method === "POST"){
-    if(path==="/users "){
+    if(path==="/users"){
 
       const user = await req.json();
 
       if(!user.nombre || !user.email ){
+        console.log("Falta algun dato");
         return new Response ("Bad request",{status: 400});
       }
 
@@ -103,6 +104,34 @@ const handler = async (req: Request): Promise<Response> => {
         }),
       { status: 200 }
     );
+  }
+  else if(path==="/tasks/move"){
+    const body=await req.json();
+    if (!body.task_id || !body.destination_project_id  ) {
+      return new Response(JSON.stringify({ error: "Faltan Campos" }), { status: 400 });
+    }
+    if(!body.origin_project_id){
+      return new Response(JSON.stringify({ error: "Faltan el origin project_id aunque es opcional" }), { status: 400 });
+    }
+    const task = await tareaCollection.findOne({ _id: new ObjectId(body.task_id) , projectId: new ObjectId(body.origin_project_id) });
+    if (!task) {
+      return new Response(JSON.stringify({ error: "Tarea no encontrada" }), { status: 404 });
+    }
+    const result = await tareaCollection.updateOne(
+      { _id: new ObjectId(body.task_id) },
+      { $set: { projectId: new ObjectId(body.destination_project_id) } }
+    )
+    if(result.modifiedCount === 0){
+      return new Response(JSON.stringify({ error: "Error al mover la tarea" }), { status: 500 });
+    }
+    return new Response(JSON.stringify({ 
+      message: "Task moved successfully.",
+      task:{
+        id: body.task_id,
+        title: task.title,
+        project_id: body.destination_project_id,
+      }
+    }), { status: 200 });
   }
   
   else if(path === "/projects"){

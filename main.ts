@@ -34,12 +34,79 @@ const handler = async (req: Request): Promise<Response> => {
     }
     else if(path==="/projects"){
       const proyectos = await ProyectoCollection.find().toArray();
-      return new Response(JSON.stringify(proyectos),{status: 200})
+      const proyectosFormatted = proyectos.map(fromModelProyecto);
+      return new Response(JSON.stringify(proyectosFormatted),{status: 200})
       
     }
+    else if (path === "/projects/by-user") {
+      const userId = url.searchParams.get("user_id");
+    
+      if (!userId) {
+        return new Response(
+          JSON.stringify({ error: "El parámetro user_id es requerido" }),
+          { status: 400 }
+        );
+      }
+    
+      if (!ObjectId.isValid(userId)) {
+        return new Response(
+          JSON.stringify({ error: "El user_id no es válido" }),
+          { status: 400 }
+        );
+      }
+    
+      const proyectos = await ProyectoCollection.find({
+        user_id: new ObjectId(userId),
+      }).toArray();
+    
+      const formattedProyectos = proyectos.map((proyecto) => ({
+        id: proyecto._id.toString(),
+        name: proyecto.nombre,
+        description: proyecto.description,
+        start_date: proyecto.start_date.toISOString(),
+        end_date: proyecto.end_date ? proyecto.end_date.toISOString() : null,
+      }));
+    
+      return new Response(JSON.stringify(formattedProyectos), { status: 200 });
+    }
+
     else if(path==="/tasks"){
       const tareas = await tareaCollection.find().toArray();
-      return new Response(JSON.stringify(tareas),{status: 200})
+      const tareasFormatted = tareas.map(fromModelTarea);
+      return new Response(JSON.stringify(tareasFormatted),{status: 200})
+    }
+
+    else if (path === "/tasks/by-project") {
+      const projectId = url.searchParams.get("project_id");
+    
+      if (!projectId) {
+        return new Response(
+          JSON.stringify({ error: "El parámetro project_id es requerido" }),
+          { status: 400 }
+        );
+      }
+    
+      if (!ObjectId.isValid(projectId)) {
+        return new Response(
+          JSON.stringify({ error: "El project_id no es válido" }),
+          { status: 400 }
+        );
+      }
+    
+      const tareas = await tareaCollection
+        .find({ projectId: new ObjectId(projectId) })
+        .toArray();
+    
+      const formattedTareas = tareas.map((tarea) => ({
+        id: tarea._id.toString(),
+        title: tarea.title,
+        description: tarea.description,
+        status: tarea.status,
+        created_at: tarea.created_at.toISOString(),
+        due_date: tarea.due_date.toISOString(),
+      }));
+    
+      return new Response(JSON.stringify(formattedTareas), { status: 200 });
     }
 
   }
@@ -223,22 +290,33 @@ const handler = async (req: Request): Promise<Response> => {
 
     else if (path === "/projects") {
       const projectId = url.searchParams.get("id");
-
+  
       if (!projectId) {
           return new Response("ID de proyecto requerido", { status: 400 });
       }
+  
+      if (!ObjectId.isValid(projectId)) {
+          return new Response("ID de proyecto no válido", { status: 400 });
+      }
+  
+  
       const project = await ProyectoCollection.findOne({ _id: new ObjectId(projectId) });
-
+   
+  
       if (!project) {
           return new Response("Proyecto no encontrado", { status: 404 });
       }
+  
       const { deletedCount } = await ProyectoCollection.deleteOne({ _id: new ObjectId(projectId) });
-
+      console.log("Resultado de deleteOne:", deletedCount);
+  
       if (deletedCount === 0) {
           return new Response("Error al eliminar el proyecto", { status: 404 });
       }
+  
       return new Response("Proyecto eliminado correctamente", { status: 200 });
   }
+  
 }
 
   

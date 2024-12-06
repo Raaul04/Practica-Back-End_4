@@ -237,7 +237,6 @@ const handler = async (req: Request): Promise<Response> => {
 
   else if (method === "DELETE") {
     if (path.startsWith("/users")) {
-
       const id = url.searchParams.get('id');
   
       if (!id) {
@@ -247,7 +246,6 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
   
-      // Validar si el ID es válido
       if (!ObjectId.isValid(id)) {
         return new Response(
           JSON.stringify({ error: "ID no válido" }),
@@ -255,7 +253,7 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
   
-      // Crear ObjectId y eliminar el documento
+     
       const objectId = new ObjectId(id);
       const { deletedCount } = await usuarioCollection.deleteOne({ _id: objectId });
   

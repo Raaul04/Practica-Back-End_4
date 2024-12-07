@@ -3,7 +3,7 @@ import { TareaModel ,ProyectoModel ,UsuarioModel } from "./types.ts";
 import { fromModelProyecto,fromModelUsuario,fromModelTarea  } from "./utilts.ts";
 
 
-const MONGO_URL = Deno.env.get("MONGO_URL")
+const MONGO_URL = "mongodb+srv://raulletrado:12345@p4.utfh8.mongodb.net/?retryWrites=true&w=majority&appName=P4"
 
 if (!MONGO_URL) {
   console.error("MONGO_URL is not set");

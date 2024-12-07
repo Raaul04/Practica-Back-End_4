@@ -161,7 +161,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({
-          id: resultado.insertedId.toString(), // Convertir ObjectId a string
+          id: resultado.insertedId.toString(), // Convertirmos ObjectId a string
           title: nuevaTarea.title,
           description: nuevaTarea.description,
           status: nuevaTarea.status,
@@ -202,7 +202,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
   
   else if(path === "/projects"){
-
+    
     const body = await req.json();
 
     if (!body.nombre || !body.description || !body.start_date || !body.user_id) {
